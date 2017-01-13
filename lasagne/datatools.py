@@ -375,7 +375,8 @@ def define_model_lstm(shape,
 def define_model_all(shape,
                      n_feat_in=5,
                      n_feat_out=3,
-                     filter_size=3,
+                     filter_size_in=3,
+                     filter_size_out=3,
                      nhid1=12,
                      nhid2=12,
                      pool_size=(2,2),
@@ -390,7 +391,7 @@ def define_model_all(shape,
     
     model = Sequential()
 
-    model.add(TimeDistributed(Convolution2D(n_feat,filter_size,filter_size,border_mode='same'),input_shape=(n_prev,npar,nx,ny)))
+    model.add(TimeDistributed(Convolution2D(n_feat,filter_size_in,filter_size_in,border_mode='same'),input_shape=(n_prev,npar,nx,ny)))
     model.add(Activation("linear"))
     model.add(TimeDistributed(MaxPooling2D(pool_size=pool_size, strides=None)))
     model.add(TimeDistributed(Flatten()))
@@ -401,7 +402,7 @@ def define_model_all(shape,
     model.add(Dense(input_dim=nhid2,output_dim=n_feat*new_nx*new_ny))
     model.add(Activation("relu"))
     model.add(Reshape((n_feat,new_nx,new_ny)))
-    model.add(Deconvolution2D(1,filter_size,filter_size,output_shape=(None,1,nx,ny),subsample=pool_size,border_mode='valid'))
+    model.add(Deconvolution2D(1,filter_size_out,filter_size_out,output_shape=(None,1,nx,ny),subsample=pool_size,border_mode='valid'))
     model.add(Activation("linear"))
     model.add(Flatten())
     optimizer = rmsprop(lr=lr)
