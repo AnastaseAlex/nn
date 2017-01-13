@@ -325,7 +325,8 @@ def prepare_data(
 def define_model_Conv(shape,
                      n_feat_in=5,
                      n_feat_out=3,
-                     filter_size=3,
+                     filter_size_in=3,
+                     filter_size_out=3, 
                      nhid=25,
                      pool_size=(2,2),
                      lr=0.01):
@@ -337,7 +338,7 @@ def define_model_Conv(shape,
     
     model = Sequential()
 
-    model.add(Convolution2D(n_feat_in,filter_size,filter_size,border_mode='same'),input_shape=(n_prev,npar,nx,ny))
+    model.add(Convolution2D(n_feat_in,filter_size_in,filter_size_in,border_mode='same'),input_shape=(n_prev,npar,nx,ny))
     model.add(Activation("linear"))
     model.add(MaxPooling2D(pool_size=pool_size, strides=None))
     model.add(Flatten())
@@ -346,7 +347,7 @@ def define_model_Conv(shape,
     model.add(Dense(input_dim=nhid,output_dim=n_feat_out*new_nx*new_ny))
     model.add(Activation("relu"))
     model.add(Reshape((n_feat_out,new_nx,new_ny)))
-    model.add(Deconvolution2D(1,filter_size,filter_size,output_shape=(None,1,nx,ny),subsample=pool_size,border_mode='valid'))
+    model.add(Deconvolution2D(1,filter_size_out,filter_size_out,output_shape=(None,1,nx,ny),subsample=pool_size,border_mode='valid'))
     model.add(Activation("linear"))
     model.add(Flatten())
     optimizer = rmsprop(lr=lr)
