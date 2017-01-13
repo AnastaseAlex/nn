@@ -357,6 +357,26 @@ def define_model_all(shape,
     model.compile(loss="mean_squared_error",optimizer=optimizer)
     return model
 
+def define_model_lstm(shape,
+                     nhid1=12,
+                     nhid2=12,
+                     lr=0.01):
+    
+    nt,n_prev,npar,nx,ny = shape    
+    
+    model = Sequential()
+    model.add(TimeDistributed(Flatten(input_shape=(n_prev,npar,nx,ny))))
+    model.add(TimeDistributed(Dense(nhid1)))
+    model.add(Activation("relu"))
+    model.add(LSTM(output_dim=nhid2,return_sequences=False))
+    model.add(Dense(input_dim=nhid2,output_dim=nx*ny))
+    model.add(Activation("relu"))
+    optimizer = rmsprop(lr=lr)
+    model.compile(loss="mean_squared_error",optimizer=optimizer)
+    
+    return model
+
+
 def save_data(
     data,
     outdir,
